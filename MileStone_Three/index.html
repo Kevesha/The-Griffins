@@ -1,0 +1,179 @@
+<!DOCTYPEhtml>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <div class="alert alert-info" id="topic" role="alert">
+        <center>
+            <h1 class="display-1">SKY NET</h1>
+        </center>
+    </div>
+    <div class="btn-toolbar justify-content-between col-sm-11 col-md-11 col-lg-11" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group" role="group" aria-label="First group">
+            <div class="btn-group-prepend">
+                <button type="button" class="btn btn-primary" data-bind='enable: agentArray().length > 0 ,click: ShowExecuteCommand.bind(this,true)'>Execute Command</button>
+                <button type="button" class="btn btn-primary" data-bind=>View Dashboard History</button>
+            </div>
+        </div>
+        <div class="btn-group">
+            <div class="btn-group-prepend">
+                <button type="button" class="btn btn-primary" data-bind="click: ShowAddAgentDialog.bind(this, true)">Add Agent</button>
+                <button type="button" class="btn btn-primary" data-bind='enable: agentArray().length > 0 ,click: ShouldShowRemoveAgents.bind(this, true)'>Remove Agent</button>
+                <button type="button" class="btn btn-primary " data-bind='enable: agentArray().length > 0 '>Edit Agent</button>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <div class=" col-sm-6 col-md-3 col-lg-3 alert-danger" data-bind='visible: showError'>Agent is not available, please check that your ip address and port are correct.</div>
+    <br/>
+    <div class="col-sm-6 col-md-3 col-lg-3" data-bind='visible:ShouldShowAddAgent'>
+        <div class="input-group input-group-md mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Agent Name</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" data-bind="value: newAgent().agentName">
+        </div>
+        <div class="input-group input-group-md mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Ip Address</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" data-bind="value: newAgent().ipAddress">
+        </div>
+        <div class="input-group input-group-md mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Port</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" data-bind="value: newAgent().port">
+        </div>
+        <button data-bind="click: addAgent" type="button" class="btn btn-info">Save</button>
+        <button type="button" class="btn btn-info" data-bind="">Cancel</button>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-3" data-bind='visible: ShouldShowRemoveAgents'>
+        <div class="input-group input-group-md mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Agent Name</span>
+            </div>
+            <select class="form-control" data-bind="options: agentArray,
+            optionsText: 'agentName',
+            value: removeAgent,
+            optionsCaption: 'Choose...'"></select>
+        </div>
+        <button data-bind="click: remove" type="button" class="btn btn-info">Remove</button>
+
+        <button type="button" class="btn btn-info">Cancel</button>
+
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-lg-3" data-bind='visible: ShowExecuteCommand'>
+        <form class="form-group" data-bind="submit: executeCommand">
+            <div class="input-group input-group-md mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Agent Name</span>
+                </div>
+                <select multiple="true" class="form-control" data-bind="options: agentArray,
+                        optionsText: 'agentName',
+                        selectedOptions: selectedAgent,
+                        optionsValue:'agentName',
+                        optionsCaption:"></select>
+            </div>
+            <br/>
+            <div class="input-group input-group-md mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Command</span>
+                </div>
+                <select class="form-control" data-bind="value: commandToRun">
+                    <option value="ip">
+                        ip
+                    </option>
+                    <option value="os">
+                        os
+                    </option>
+                    <option value="hostname">
+                        hostname
+                    </option>
+                    <option value="fully Qualified hostname">
+                        fully Qualified hostname
+                    </option>
+                    <option value="script">
+                        script
+                    </option>
+                </select>
+            </div>
+            <br/>
+            <div class="input-group input-group-md mb-3" data-bind="visible: commandToRun() === 'script'">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Script</span>
+                </div>
+                <input type="script" data-bind="value: scriptData" class="form-control" id="script" aria-describedby="script" placeholder="Please enter your script details">
+            </div>
+            <br/>
+            <input type="submit" class="btn btn-secondary" value="Execute" />
+            <input type="submit" class="btn btn-secondary" value="Cancel" />
+        </form>
+    </div>
+
+    <div id="agents" class="agents" data-bind='visible: ShouldShowAgents'>
+        <div data-bind="foreach: agentArray" class="agentWrapper">
+            <div class="agent" data-bind="style:{ 'background-color' :  $data.Status() }">
+                <div class="display-4" data-bind="text:agentName"></div>
+                <table class="Data">
+                    <tr>
+                        <td>Last Executed Command:</td>
+                        <td data-bind="text:lastCommand"></td>
+                    </tr>
+                    <tr>
+                        <td>Result:</td>
+                        <td data-bind="text:CommandResult"></td>
+                    </tr>
+                    <tr>
+                        <td>Execution Time:</td>
+                        <td data-bind="text:CommandRunTimestamp"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-info" data-bind="click: $parent.ShowAgentHistory.bind(this,true)" style="float:right">View History</button>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class ="container" data-bind='visible: ShouldShowAgentHistory'>
+        <h3>Agent History</h3>
+        <table class="table table-striped table-boarderd">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Command</th>
+                <th scope="col">Results</th>
+                <th scope="col">UTC Timestamp</th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: historyArray">
+              <tr >
+                <td data-bind="text:id" scope="row"></td>
+                <td data-bind="text:command" ></td>
+                <td data-bind="text:result" ></td>
+                <td data-bind="text:executionTimeStamp"></td>
+              </tr>
+            </tbody>
+          </table>
+          <button data-bind="click: ShouldShowAgents " type="button" class="btn btn-info" style="float:right">Close</button>
+    </div>
+
+    <script src="ko\knockout-3.4.2.js"></script>
+    <script src="src\Agent.js"></script>
+    <script src="src\AgentViewModel.js"></script>
+    <script src="src\History.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+
+.agents{
+    width:100%;
+    min-height:350px;
+    max-height: 80%;
+    margin-top: 80px;
+    border: 2px black double;
+    overflow-y: scroll;
+}
+
+.agent{
+    border-radius: 25px;
+    position: float;
+    float:left;
+    width:450px;
+    margin:10px;
+    height:280px;
+    color: white;
+    border: 2px solid black;
+}
+
+
+.agentWrapper{
+    width:100%;
+    height:100%;
+}
+.view-table
+{
+    display:table;
+    width:100%;
+}
+.view-row,
+{
+    display:table-row;
+}
+.view-row > div
+{
+    display: table-cell;
+}
+.view-name 
+{
+    text-align:right;
+}
